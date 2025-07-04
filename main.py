@@ -20,7 +20,7 @@ while continuarExecutando:
     print("1. Adicionar Tarefa.")
     print("2. Listar Tarefas.")
     print("3. Remover Tarefas.")
-    print("4. Sair.") # Alterei para 4, pois não tínhamos a opção 'Concluir' ainda
+    print("4. Sair.") 
     print("==================\n")
 
     escolhaUsuario = input("Escolha uma opção: \n")
