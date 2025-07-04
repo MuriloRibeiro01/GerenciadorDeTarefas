@@ -2,9 +2,10 @@
 
 import os
 
-tarefas = [] # Lista para armazenar as tarefas
+# A lista agora vai armazenar DICIONÁRIOS, não mais strings simples
+tarefas = []
 
-continuarExecutando = True # Variável para controlar o loop principal
+continuarExecutando = True
 
 # Função para limpar o console, adaptada para Windows (nt)
 def clear_console():
@@ -20,67 +21,117 @@ while continuarExecutando:
     print("1. Adicionar Tarefa.")
     print("2. Listar Tarefas.")
     print("3. Remover Tarefas.")
-    print("4. Sair.") 
+    print("4. Concluir Tarefa.") # Nova opção!
+    print("5. Sair.")
     print("==================\n")
 
-    escolhaUsuario = input("Escolha uma opção: \n")
+    # Garante que a escolha do usuário seja um número inteiro para comparações futuras
+    try:
+        escolhaUsuario = int(input("Escolha uma opção: \n"))
+    except ValueError:
+        print("Entrada inválida! Por favor, digite um NÚMERO da opção.")
+        input("Pressione <enter> para continuar...")
+        continue # Volta para o início do loop sem processar o resto
 
     # Opção 1: Adicionar Tarefa
-    if escolhaUsuario == "1":
-        print("Digite sua tarefa: ")
-        tarefasUsiario = input() # Pega a descrição da tarefa
-        tarefas.append(tarefasUsiario) # Adiciona a string diretamente na lista
+    if escolhaUsuario == 1: # Comparando com int
+        descricaoTarefa = input("Qual a sua tarefa: \n")
+        prioridadeTarefa = input("Qual a prioridade da sua tarefa (Ex: Alta, Média, Baixa): \n")
+
+        # Cria um dicionário para a nova tarefa
+        nova_tarefa = {
+            "descricao": descricaoTarefa, # A descrição da tarefa
+            "concluida": False,         # Status inicial: não concluída
+            "prioridade": prioridadeTarefa
+        }
+        tarefas.append(nova_tarefa) # Adiciona o dicionário à lista
         print("Tarefa adicionada com sucesso!")
-        input("\nPressione <enter> para continuar...") # Pausa para o usuário ler a mensagem
+        input("\nPressione <enter> para continuar...")
 
     # Opção 2: Listar Tarefas
-    elif escolhaUsuario == "2":
-        if not tarefas: # Verifica se a lista de tarefas está vazia
+    elif escolhaUsuario == 2: # Comparando com int
+        if not tarefas:
             print("Lista de tarefas vazia.\n")
             input("Pressione <enter> para continuar...")
         else:
-            print("Lista de Tarefas:")
-            # Percorre a lista e exibe cada tarefa com sua numeração
-            for i, listagem in enumerate(tarefas):
-                # Neste ponto, 'listagem' é a string da tarefa
-                print(f"{i + 1}. {listagem}") # Exibe a tarefa numerada
-            input("\nPressione <enter> para continuar...")
+            print("--- Lista de Tarefas ---")
+            for i, tarefa_dic in enumerate(tarefas): # 'tarefa_dic' agora é o dicionário de cada tarefa
+                # Define o símbolo de status baseado na chave 'concluida' do dicionário
+                simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
+
+                # Imprime a tarefa usando as chaves do dicionário 'tarefa_dic'
+                print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
+            print("------------------------")
+            input("Pressione <enter> para continuar...")
 
     # Opção 3: Remover Tarefas
-    elif escolhaUsuario == "3":
-        if not tarefas: # Verifica se a lista está vazia antes de tentar remover
+    elif escolhaUsuario == 3: # Comparando com int
+        if not tarefas:
             print("Nenhuma tarefa para remover.\n")
             input("Pressione <enter> para continuar...")
         else:
-            print("Escolha a tarefa a ser deletada:")
-            # Lista as tarefas numeradas para o usuário escolher
-            for i, listagem in enumerate(tarefas):
-                # Neste ponto, 'listagem' é a string da tarefa
-                print(f"{i + 1}. {listagem}")
+            print("--- Tarefas para Remover ---")
+            # Lista as tarefas para o usuário escolher, usando o novo formato de exibição
+            for i, tarefa_dic in enumerate(tarefas):
+                simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
+                print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
+            print("---------------------------")
 
-            try: # Tenta converter a entrada para inteiro, para evitar erro se digitar texto
-                escolhaRemocao_numero = int(input())
-                indiceDoPython = escolhaRemocao_numero - 1 # Ajusta o número do usuário para o índice Python (base 0)
+            try:
+                escolhaRemocao_numero = int(input("Digite o NÚMERO da tarefa a ser deletada: \n"))
+                indiceDoPython = escolhaRemocao_numero - 1
 
-                # Valida se o índice está dentro dos limites da lista
                 if 0 <= indiceDoPython < len(tarefas):
-                    tarefa_removida = tarefas.pop(indiceDoPython) # Remove a tarefa e guarda ela
-                    print(f"Tarefa '{tarefa_removida}' deletada com sucesso!")
+                    # Remove o dicionário da tarefa e guarda a tarefa removida para a mensagem
+                    tarefa_removida_dic = tarefas.pop(indiceDoPython)
+                    print(f"Tarefa '{tarefa_removida_dic['descricao']}' deletada com sucesso!")
                 else:
                     print("Número inválido. Não existe tarefa com esse número.")
-            except ValueError: # Se o usuário digitar algo que não seja número
+            except ValueError:
                 print("Entrada inválida. Por favor, digite um número.")
 
             input("\nPressione <enter> para continuar...")
 
-    # Opção 4: Sair do Programa
-    elif escolhaUsuario == "4":
-        print("Programa finalizado com sucesso!")
+    # Opção 4: Concluir Tarefa
+    elif escolhaUsuario == 4: # Comparando com int
+        if not tarefas:
+            print("Nenhuma tarefa para concluir.\n")
+            input("Pressione <enter> para continuar...")
+        else:
+            print("--- Tarefas para Concluir ---")
+            # Lista as tarefas para o usuário escolher (com o status atual)
+            for i, tarefa_dic in enumerate(tarefas):
+                simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
+                print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
+            print("----------------------------")
+
+            try:
+                escolhaConclusao_numero = int(input("Digite o NÚMERO da tarefa a ser concluída: \n"))
+                indiceDoPython = escolhaConclusao_numero - 1
+
+                if 0 <= indiceDoPython < len(tarefas):
+                    # Acessa o dicionário da tarefa e altera o valor da chave 'concluida'
+                    tarefa_a_concluir = tarefas[indiceDoPython]
+                    if tarefa_a_concluir["concluida"]:
+                        print(f"A tarefa '{tarefa_a_concluir['descricao']}' já estava concluída!")
+                    else:
+                        tarefa_a_concluir["concluida"] = True # Marca como True!
+                        print(f"Tarefa '{tarefa_a_concluir['descricao']}' marcada como concluída com sucesso!")
+                else:
+                    print("Número inválido. Não existe tarefa com esse número.")
+            except ValueError:
+                print("Entrada inválida. Por favor, digite um número.")
+
+            input("\nPressione <enter> para continuar...")
+
+    # Opção 5: Sair do Programa
+    elif escolhaUsuario == 5: # Comparando com int
+        print("Programa finalizado com sucesso! Até a próxima!")
         continuarExecutando = False # Altera a condição para sair do loop
 
-    # Caso a opção digitada não seja válida
+    # Caso a opção digitada não seja válida (agora pega qualquer int fora do range)
     else:
-        print("Opção inválida. Escolha entre 1, 2, 3 ou 4.\n")
+        print("Opção inválida. Por favor, escolha entre 1, 2, 3, 4 ou 5.\n")
         input("Pressione <enter> para continuar...")
 
 print("Obrigado por usar o Gerenciador de Tarefas!")
