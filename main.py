@@ -2,8 +2,11 @@
 
 import os
 
+import json
+
 # A lista agora vai armazenar DICIONÁRIOS, não mais strings simples
 tarefas = []
+nome_arquivo_tarefas = "minhas_tarefas.json" # Nome para o arquivo de dados
 
 continuarExecutando = True
 
@@ -11,6 +14,30 @@ continuarExecutando = True
 def clear_console():
     if os.name == 'nt':
         _ = os.system('cls') # No Windows, usa 'cls'
+
+# --- BLOCO DE CARREGAMENTO ---
+
+try:
+    with open(nome_arquivo_tarefas, 'r') as json_file:
+        tarefas_carregadas = json.load(json_file)
+        tarefas = tarefas_carregadas # Atribui o que foi carregado à lista principal.
+        print("Tarefas carregadas com sucesso!\n")
+except FileNotFoundError:
+    print("Arquivo não encontrado. Iniciando com lista vazia.")
+    tarefas = []
+except json.decoder.JSONDecodeError:
+    print("Erro ao ler arquivo (pode estar corrompido). Iniciando com lista vazia.\n")
+    tarefas = [] # Garante que a lista esteja vazia se o JSON estiver inválido.
+except PermissionError:
+    print("Erro de permissão KKKKKKKKKKKKKKKK")
+except IOError:
+    print("Disco rígido cheio.")
+except Exception as e:
+    print(f"Erro desconhecido ao salvar: {e}.")
+
+# --- FIM DO BLOCO DE CARREGAMENTO ---
+
+# Esse bloco só vai rodar uma vez, já que está no início do código, fora do while.
 
 # Loop principal do programa
 while continuarExecutando:
@@ -126,6 +153,9 @@ while continuarExecutando:
 
     # Opção 5: Sair do Programa
     elif escolhaUsuario == 5: # Comparando com int
+        with open(nome_arquivo_tarefas, 'w', encoding='utf-8') as json_file:
+            json.dump(tarefas, json_file, indent=4, ensure_ascii=False) # Vai salvar a lista 'tarefas'.
+        print("Tarefa salva com sucesso!\n")
         print("Programa finalizado com sucesso! Até a próxima!")
         continuarExecutando = False # Altera a condição para sair do loop
 
