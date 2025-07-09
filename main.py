@@ -21,9 +21,10 @@ def exibir_listagem(tarefas):
 
     if not tarefas:
         print("Nenhuma tarefa para listar.\n")
+        input("Pressione <enter> para continuar...")
         return
 
-    for i, tarefa_dic in enumerate(tarefas):
+    for i, tarefa_dic in enumerate(tarefas): # for retirado do looping while para reduzir a repetitividade de códgio
         simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
         print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
     print("---------------------------")
@@ -103,6 +104,7 @@ while continuarExecutando:
             print("Nenhuma tarefa para remover.\n")
             input("Pressione <enter> para continuar...")
         else:
+            # Chamada da função de exibição
             print("--- Tarefas para Remover ---")
             exibir_listagem(tarefas)
 
@@ -127,6 +129,7 @@ while continuarExecutando:
             print("Nenhuma tarefa para concluir.\n")
             input("Pressione <enter> para continuar...")
         else:
+            # Chamada da função de exibição
             print("--- Tarefas para Concluir ---")
             exibir_listagem(tarefas)
 
@@ -165,11 +168,13 @@ while continuarExecutando:
 
                 opcaoUsuario = int(input("Escolha uma opção: "))
 
-                if opcaoUsuario == 1:
+                if opcaoUsuario == 1: # Comparando com int
+                    # Chamada da função de exibição
                     print("--- Lista de Tarefas ---\n")
                     exibir_listagem(tarefas)
 
-                elif opcaoUsuario == 2:
+                # Utilizado compreensão de lista para fazer a filtragem
+                elif opcaoUsuario == 2: # Comparando com int
                     dicionarioPendentes = [
                         tarefa_dic
                         for tarefa_dic in tarefas
@@ -177,10 +182,12 @@ while continuarExecutando:
                     ]
 
                     print("--- Tarefas Pendentes ---\n")
+                    # Chamada da função de exibição para o dicionário criado
                     exibir_listagem(dicionarioPendentes)
                     input("Pressione <enter> para continuar...")
 
-                elif opcaoUsuario == 3:
+                # Utilizado compreensão de lista para fazer a filtragem
+                elif opcaoUsuario == 3: # Comparando com int
                     dicionarioConclusao = [
                         tarefa_dic
                         for tarefa_dic in tarefas
@@ -188,10 +195,11 @@ while continuarExecutando:
                     ]
 
                     print("--- Tarefas Conclúidas ---\n")
+                    # Chamada da função de exibição para o dicionário criado
                     exibir_listagem(dicionarioConclusao)
                     input("Pressione <enter> para continuar...")
 
-                elif opcaoUsuario == 4:
+                elif opcaoUsuario == 4: # Comparando com int
                     print("Voltando ao Menu Principal...")
                     continuarFiltragem = False
 
