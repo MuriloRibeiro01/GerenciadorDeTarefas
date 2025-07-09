@@ -15,10 +15,23 @@ def clear_console():
     if os.name == 'nt':
         _ = os.system('cls') # No Windows, usa 'cls'
 
-# --- BLOCO DE CARREGAMENTO ---
 
+# Função para listar as tarefas, já que o uso de copy + paste estava muito alto
+def exibir_listagem(tarefas):
+
+    if not tarefas:
+        print("Nenhuma tarefa para listar.\n")
+        return
+
+    for i, tarefa_dic in enumerate(tarefas):
+        simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
+        print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
+    print("---------------------------")
+
+
+# --- BLOCO DE CARREGAMENTO ---
 try:
-    with open(nome_arquivo_tarefas, 'r') as json_file:
+    with open(nome_arquivo_tarefas, 'r', encoding='utf-8') as json_file:
         tarefas_carregadas = json.load(json_file)
         tarefas = tarefas_carregadas # Atribui o que foi carregado à lista principal.
         print("Tarefas carregadas com sucesso!\n")
@@ -39,8 +52,10 @@ except Exception as e:
 
 # Esse bloco só vai rodar uma vez, já que está no início do código, fora do while.
 
+
 # Loop principal do programa
 while continuarExecutando:
+
     clear_console() # Limpa o console antes de exibir o menu
 
     # Exibe o menu de opções para o usuário
@@ -49,7 +64,8 @@ while continuarExecutando:
     print("2. Listar Tarefas.")
     print("3. Remover Tarefas.")
     print("4. Concluir Tarefa.") # Nova opção!
-    print("5. Sair.")
+    print("5. Filtrar Tarefas.")
+    print("6. Sair.")
     print("==================\n")
 
     # Garante que a escolha do usuário seja um número inteiro para comparações futuras
@@ -77,19 +93,9 @@ while continuarExecutando:
 
     # Opção 2: Listar Tarefas
     elif escolhaUsuario == 2: # Comparando com int
-        if not tarefas:
-            print("Lista de tarefas vazia.\n")
-            input("Pressione <enter> para continuar...")
-        else:
-            print("--- Lista de Tarefas ---")
-            for i, tarefa_dic in enumerate(tarefas): # 'tarefa_dic' agora é o dicionário de cada tarefa
-                # Define o símbolo de status baseado na chave 'concluida' do dicionário
-                simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
-
-                # Imprime a tarefa usando as chaves do dicionário 'tarefa_dic'
-                print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
-            print("------------------------")
-            input("Pressione <enter> para continuar...")
+        print("--- Lista de Tarefas ---\n")
+        exibir_listagem(tarefas)
+        input("\nPressione <enter> para continuar...")
 
     # Opção 3: Remover Tarefas
     elif escolhaUsuario == 3: # Comparando com int
@@ -98,11 +104,7 @@ while continuarExecutando:
             input("Pressione <enter> para continuar...")
         else:
             print("--- Tarefas para Remover ---")
-            # Lista as tarefas para o usuário escolher, usando o novo formato de exibição
-            for i, tarefa_dic in enumerate(tarefas):
-                simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
-                print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
-            print("---------------------------")
+            exibir_listagem(tarefas)
 
             try:
                 escolhaRemocao_numero = int(input("Digite o NÚMERO da tarefa a ser deletada: \n"))
@@ -126,11 +128,7 @@ while continuarExecutando:
             input("Pressione <enter> para continuar...")
         else:
             print("--- Tarefas para Concluir ---")
-            # Lista as tarefas para o usuário escolher (com o status atual)
-            for i, tarefa_dic in enumerate(tarefas):
-                simboloStatus = "[X]" if tarefa_dic["concluida"] else "[ ]"
-                print(f"{i + 1}. {simboloStatus} {tarefa_dic['descricao']} (Prioridade: {tarefa_dic['prioridade']})")
-            print("----------------------------")
+            exibir_listagem(tarefas)
 
             try:
                 escolhaConclusao_numero = int(input("Digite o NÚMERO da tarefa a ser concluída: \n"))
@@ -151,8 +149,55 @@ while continuarExecutando:
 
             input("\nPressione <enter> para continuar...")
 
-    # Opção 5: Sair do Programa
+    # Opção 5: Visualizar Tarefas (Filtrar)
     elif escolhaUsuario == 5: # Comparando com int
+        if not tarefas:
+            print("Nenhuma tarefa para filtrar.\n")
+            input("Pressione <enter> para continuar...")
+        else:
+            print("--- Lista de Filtragens ---")
+            continuarFiltragem = True
+            while continuarFiltragem:
+                print("1 - Todas as tarefas\n")
+                print("2 - Tarefas Pendentes\n")
+                print("3 - Tarefas Concluídas\n")
+                print("4 - Voltar ao Menu Principal\n")
+
+                opcaoUsuario = int(input("Escolha uma opção: "))
+
+                if opcaoUsuario == 1:
+                    print("--- Lista de Tarefas ---\n")
+                    exibir_listagem(tarefas)
+
+                elif opcaoUsuario == 2:
+                    dicionarioPendentes = [
+                        tarefa_dic
+                        for tarefa_dic in tarefas
+                        if not tarefa_dic["concluida"]
+                    ]
+
+                    print("--- Tarefas Pendentes ---\n")
+                    exibir_listagem(dicionarioPendentes)
+                    input("Pressione <enter> para continuar...")
+
+                elif opcaoUsuario == 3:
+                    dicionarioConclusao = [
+                        tarefa_dic
+                        for tarefa_dic in tarefas
+                        if tarefa_dic["concluida"]
+                    ]
+
+                    print("--- Tarefas Conclúidas ---\n")
+                    exibir_listagem(dicionarioConclusao)
+                    input("Pressione <enter> para continuar...")
+
+                elif opcaoUsuario == 4:
+                    print("Voltando ao Menu Principal...")
+                    continuarFiltragem = False
+
+
+    # Opção 6: Sair do Programa
+    elif escolhaUsuario == 6: # Comparando com int
         with open(nome_arquivo_tarefas, 'w', encoding='utf-8') as json_file:
             json.dump(tarefas, json_file, indent=4, ensure_ascii=False) # Vai salvar a lista 'tarefas'.
         print("Tarefa salva com sucesso!\n")
