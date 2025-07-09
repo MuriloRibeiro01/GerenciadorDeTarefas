@@ -1,7 +1,7 @@
 [
     {
-        "descricao": "Tarefa 1",
+        "descricao": "Passear com o cachorro.",
         "concluida": true,
-        "prioridade": "Baixa"
+        "prioridade": "Alta"
     }
 ]
